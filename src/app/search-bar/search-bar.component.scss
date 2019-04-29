@@ -1,0 +1,9 @@
+.search-bar {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+
+  &__spinner {
+    margin-left: 20px;
+  }
+}

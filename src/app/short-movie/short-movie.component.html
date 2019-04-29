@@ -1,0 +1,16 @@
+<mat-card class="short-movie" [ngClass]="{ 'short-movie--list': view === 'list' }">
+  <a class="short-movie__link" [routerLink]="['/movie/' + movie.imdbID]">
+    <img class="short-movie__img" src="{{ movie.Poster }}" alt="" />
+    <div class="short-movie__description">
+      <div class="short-movie__title">{{ movie.Title }}</div>
+      <div class="short-movie__year">{{ movie.Year }}</div>
+    </div>
+  </a>
+  <div class="short-movie__controls">
+    <app-button
+      class="short-movie__button"
+      *ngFor="let button of buttons; trackBy: trackByFunction"
+      [button]="button"
+    ></app-button>
+  </div>
+</mat-card>

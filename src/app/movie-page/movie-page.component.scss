@@ -1,0 +1,96 @@
+.movie-page {
+  padding: 10px;
+
+  &__control-btn {
+    margin: 5px;
+  }
+
+  &__title {
+    margin-top: 20px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    margin-bottom: 60px;
+
+    @media screen and (min-width: 720px) {
+      flex-direction: row;
+    }
+  }
+
+  &__poster {
+    width: 100%;
+    background-color: black;
+    color: white;
+    padding: 20px;
+    position: relative;
+
+    @media screen and (min-width: 720px) {
+      width: 300px;
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+
+  &__img-plug {
+    position: absolute;
+    height: 30%;
+    width: 30%;
+
+    @keyframes flying {
+      0% {
+        left: 50%;
+        top: 50%;
+        transform: rotateZ(0deg);
+      }
+      20% {
+        left: 56%;
+        top: 45%;
+        transform: rotateZ(180deg);
+      }
+      40% {
+        left: 50%;
+        top: 20%;
+        transform: rotateZ(-180deg);
+
+      }
+      60% {
+        left: 25%;
+        top: 60%;
+        transform: rotateZ(360deg);
+      }
+      80% {
+        left: 40%;
+        top: 30%;
+        transform: rotateZ(180deg);
+      }
+      100% {
+        left: 50%;
+        top: 50%;
+        transform: rotateZ(0deg);
+      }
+    }
+
+    animation-name: flying;
+    animation-duration: 100s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+
+  &__description {
+    padding: 0 10px;
+    @media screen and (min-width: 720px) {
+      width: 70%;
+    }
+  }
+
+  &__error {
+    margin: 20px;
+  }
+}

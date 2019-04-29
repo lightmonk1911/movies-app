@@ -1,0 +1,50 @@
+<div class="movie-page">
+  <app-button class="movie-page__control-btn" [button]="backBtn"></app-button>
+  <app-button
+    *ngIf="favoriteBtn"
+    class="movie-page__control-btn"
+    [button]="favoriteBtn"
+  ></app-button>
+  <app-button *ngIf="watchedBtn" class="movie-page__control-btn" [button]="watchedBtn"></app-button>
+
+  <mat-progress-spinner
+    *ngIf="movieData.loading"
+    class="movie-page__spinner"
+    color="primary"
+    mode="indeterminate"
+  ></mat-progress-spinner>
+
+  <mat-accordion class="movie-page__error" *ngIf="movieData.error">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Возникла ошибка при загрузке фильма...
+        </mat-panel-title>
+        <mat-panel-description>
+          Подробнее
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      {{ movieData.error }}
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <h2 class="movie-page__title">{{ movieData.Title }}</h2>
+  <div *ngIf="!movieData.loading && !movieData.error" class="movie-page__info">
+    <div class="movie-page__poster" [ngSwitch]="badImgPath">
+      <img *ngSwitchCase="false"
+        class="movie-page__img"
+        src="{{ movieData.Poster }}"
+        alt=""
+        srcset=""
+        (error)="imgLoadError()"
+      />
+      <div *ngSwitchCase="true">
+        Не удалось загрузить постер для этого фильма...
+        <mat-icon class="movie-page__img-plug" svgIcon="cosmonaut"></mat-icon>
+      </div>
+    </div>
+    <div class="movie-page__description">
+      <app-movie-prop *ngFor="let prop of movieProps" [prop]="prop"></app-movie-prop>
+    </div>
+  </div>
+</div>

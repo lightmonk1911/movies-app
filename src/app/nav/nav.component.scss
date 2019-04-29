@@ -1,0 +1,39 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+
+  @media screen and (min-width: 720px) {
+    position: static;
+  }
+
+  &__list {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    margin: 0;
+    padding: 10px;
+  }
+
+  &__item {
+    width: 32%;
+    @media screen and (min-width: 720px) {
+    }
+  }
+
+  &__icon {
+    margin: 0 10px;
+  }
+
+  &__link {
+    width: 100%;
+  }
+
+  &__label {
+    display: none;
+    @media screen and (min-width: 720px) {
+      display: inline;
+    }
+  }
+}

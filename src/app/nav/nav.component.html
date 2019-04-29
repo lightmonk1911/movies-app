@@ -1,0 +1,16 @@
+<nav class="nav">
+  <ul class="nav__list">
+    <li
+      class="nav__item"
+      *ngFor="let navItem of navItems"
+      [routerLink]="navItem.path"
+      routerLinkActive
+      #rla="routerLinkActive"
+    >
+      <a mat-raised-button [color]="rla.isActive ? 'accent' : 'primary'" class="nav__link">
+          <mat-icon class="nav__icon" [svgIcon]="navItem.iconName"></mat-icon>
+          <span class="nav__label">{{ navItem.label }}</span>
+      </a>
+    </li>
+  </ul>
+</nav>

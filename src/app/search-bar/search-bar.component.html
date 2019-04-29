@@ -1,0 +1,21 @@
+<form class="search-bar">
+  <mat-form-field>
+    <input
+      autofocus
+      matInput
+      placeholder="Название фильма"
+      [(ngModel)]="value"
+      type="text"
+      name="search"
+      [disabled]="searching"
+    />
+  </mat-form-field>
+  <mat-progress-spinner
+    [diameter]="30"
+    class="search-bar__spinner"
+    *ngIf="searching"
+    color="primary"
+    mode="indeterminate"
+  ></mat-progress-spinner>
+  <button *ngIf="!searching" [disabled]="!value" mat-button (click)="search()" type="submit">Найти</button>
+</form>

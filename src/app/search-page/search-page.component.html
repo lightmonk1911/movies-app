@@ -1,0 +1,60 @@
+<div class="search-page">
+  <h2 class="search-page__heading">
+    Поиск
+  </h2>
+  <app-search-bar
+    [searching]="(searchResult$ | async).searching"
+    class="search-page__search-bar"
+  ></app-search-bar>
+
+  <div class="search-page__results" *ngIf="!(searchResult$ | async).searching && (moviesToShowPrepared$ | async).length">
+    <div class="search-page__top-controls">
+      <mat-button-toggle-group name="view" [value]="view" (change)="changeView($event)">
+        <mat-button-toggle value="list">Списком</mat-button-toggle>
+        <mat-button-toggle value="cards">Карточками</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <mat-paginator
+        class="search-page__paginator"
+        [length]="countOfMovies$ | async"
+        [pageIndex]="(searchResult$ | async).page - 1"
+        [pageSize]="pageSize"
+        (page)="changePage($event)"
+      >
+      </mat-paginator>
+    </div>
+
+    <app-short-movie
+      class="search-page__short-movie"
+      [view]="view"
+      *ngFor="let item of moviesToShowPrepared$ | async; trackBy: trackByFunction"
+      [movie]="item.movie"
+      [buttons]="item.buttons"
+    ></app-short-movie>
+
+    <div class="search-page__error" *ngIf="(searchResult$ | async).error"></div>
+
+    <mat-accordion class="search-page__error" *ngIf="(searchResult$ | async).error">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Возникла ошибка при поиске фильма по запросу {{ (searchResult$ | async).query }}
+          </mat-panel-title>
+          <mat-panel-description>
+            Подробнее
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        {{ (searchResult$ | async).error }}
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <mat-paginator
+      class="search-page__paginator"
+      [length]="countOfMovies$ | async"
+      [pageIndex]="(searchResult$ | async).page - 1"
+      [pageSize]="pageSize"
+      (page)="changePage($event)"
+    >
+    </mat-paginator>
+  </div>
+</div>

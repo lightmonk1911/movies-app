@@ -1,0 +1,31 @@
+<div class="favorite-page">
+  <h2 class="favorite-page__heading">Избранное</h2>
+
+  <div class="favorite-page__top-controls">
+    <mat-button-toggle-group name="view" [value]="view" (change)="changeView($event)">
+      <mat-button-toggle value="list">Списком</mat-button-toggle>
+      <mat-button-toggle value="cards">Карточками</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-paginator
+      [length]="length$ | async"
+      [pageSize]="pageSize"
+      (page)="changePage($event)"
+      [pageIndex]="(favorite$ | async).page - 1"
+    ></mat-paginator>
+  </div>
+
+  <app-short-movie
+    [view]="view"
+    *ngFor="let item of moviesToShowPrepared$ | async; trackBy: trackByFunction"
+    [movie]="item.movie"
+    [buttons]="item.buttons"
+  ></app-short-movie>
+
+  <mat-paginator
+    [length]="length$ | async"
+    [pageSize]="pageSize"
+    [pageIndex]="(favorite$ | async).page - 1"
+    (page)="changePage($event)"
+  ></mat-paginator>
+</div>
