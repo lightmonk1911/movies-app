@@ -6,10 +6,10 @@ import { Location } from '@angular/common';
 import { Button } from '../button/button.model';
 import {
   backBtn,
-  inFavorite,
-  addToFavoriteBtn,
-  inWatched,
-  addToWatchedBtn
+  inFavoriteBntType,
+  addToFavoriteBtnType,
+  inWatchedBtnType,
+  addToWatchedBtnType
 } from '../button/button.types';
 import { MatSnackBar } from '@angular/material';
 import { IListOfMovies } from '../api/api.actions';
@@ -83,9 +83,9 @@ export class MoviePageComponent implements OnInit {
           return;
         }
         const favorite = movies.find((movie: IMovie) => movie.imdbID === imdbID);
-        this.favoriteBtn = new Button(favorite ? inFavorite : addToFavoriteBtn, () =>
+        this.favoriteBtn = new Button(favorite ? inFavoriteBntType : addToFavoriteBtnType, () =>
           this.store.dispatch({
-            type: favorite ? inFavorite.actionType : addToFavoriteBtn.actionType,
+            type: favorite ? inFavoriteBntType.actionType : addToFavoriteBtnType.actionType,
             payload: { movie: this.movieData }
           })
         );
@@ -98,9 +98,9 @@ export class MoviePageComponent implements OnInit {
           return;
         }
         const watched = movies.find((movie: IMovie) => movie.imdbID === imdbID);
-        this.watchedBtn = new Button(watched ? inWatched : addToWatchedBtn, () =>
+        this.watchedBtn = new Button(watched ? inWatchedBtnType : addToWatchedBtnType, () =>
           this.store.dispatch({
-            type: watched ? inWatched.actionType : addToWatchedBtn.actionType,
+            type: watched ? inWatchedBtnType.actionType : addToWatchedBtnType.actionType,
             payload: { movie: this.movieData }
           })
         );

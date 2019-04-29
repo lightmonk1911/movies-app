@@ -23,8 +23,8 @@ export interface State {
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
   return (state, action) => {
-    console.log('state', state);
     console.log('action', action);
+    console.log('state', reducer(state, action));
     return reducer(state, action);
   };
 }

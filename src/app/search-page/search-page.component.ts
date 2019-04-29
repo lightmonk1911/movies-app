@@ -7,54 +7,16 @@ import { PageEvent, MatSnackBar, MatButtonToggleChange } from '@angular/material
 import { ActionTypes } from '../search-bar/search-bar.actions';
 import {
   IButtonType,
-  addToFavoriteBtn,
-  inWatched,
-  addToWatchedBtn,
-  inFavorite
+  addToFavoriteBtnType,
+  inWatchedBtnType,
+  addToWatchedBtnType,
+  inFavoriteBntType
 } from '../button/button.types';
 import { Button } from '../button/button.model';
-import { selectFavoriteMovies, selectWatchedMovies, selectSearchResult } from '../reducers';
+import { map } from 'rxjs/operators';
 
-const searchProjector = (
-  favoriteList: Array<IMovie>,
-  searchResult: ISearchResult,
-  watchedList: Array<IMovie>
-) => {
-  if (searchResult.error) {
-    return [];
-  }
-  return searchResult.movies.map((movie) => {
-    const watched = watchedList.find(
-      (watchedMovie: IMovie) => watchedMovie.imdbID === movie.imdbID
-    );
-    const favorite = favoriteList.find(
-      (favoriteMovie: IMovie) => favoriteMovie.imdbID === movie.imdbID
-    );
-    const watchedBtn = new Button(watched ? inWatched : addToWatchedBtn, () =>
-      this.store.dispatch({
-        type: watched ? inWatched.actionType : addToWatchedBtn.actionType,
-        payload: { movie }
-      })
-    );
-    const favoriteBtn = new Button(favorite ? inFavorite : addToFavoriteBtn, () =>
-      this.store.dispatch({
-        type: favorite ? inFavorite.actionType : addToFavoriteBtn.actionType,
-        payload: { movie }
-      })
-    );
-    return {
-      movie,
-      buttons: [favoriteBtn, watchedBtn]
-    };
-  });
-};
-
-const combinedSelector = createSelector(
-  selectFavoriteMovies,
-  selectSearchResult,
-  selectWatchedMovies,
-  searchProjector
-);
+const listHas = (list: Array<IMovie>, movie: IMovie) =>
+  list.find((movieInList) => movieInList.imdbID === movie.imdbID);
 
 @Component({
   selector: 'app-search-page',
@@ -63,14 +25,17 @@ const combinedSelector = createSelector(
 })
 export class SearchPageComponent implements OnInit {
   searchResult$: Observable<ISearchResult>;
-  buttonTypes: Array<IButtonType> = [addToFavoriteBtn];
-  buttons: Array<Button>;
   length = 10;
   pageSize = 10;
   moviesToShowPrepared$: Observable<Array<{ movie: IMovie; buttons: Array<Button> }>>;
-  countOfMovies$: Observable<number>;
+  view: View = 'cards';
   query: string;
-  view: View;
+  combinedLists$: Observable<{
+    found: IMovie[];
+    error: string;
+    favorite: IMovie[];
+    watched: IMovie[];
+  }>;
 
   constructor(
     private store: Store<{
@@ -80,6 +45,34 @@ export class SearchPageComponent implements OnInit {
     }>,
     private snackBar: MatSnackBar
   ) {}
+
+  addToFavorite = (movie: IMovie) => {
+    this.store.dispatch({
+      type: addToFavoriteBtnType.actionType,
+      payload: { movie }
+    });
+  }
+
+  addToWatched = (movie: IMovie) => {
+    this.store.dispatch({
+      type: addToWatchedBtnType.actionType,
+      payload: { movie }
+    });
+  }
+
+  removeFromFavorite = (movie: IMovie) => {
+    this.store.dispatch({
+      type: inFavoriteBntType.actionType,
+      payload: { movie }
+    });
+  }
+
+  removeFromWatched = (movie: IMovie) => {
+    this.store.dispatch({
+      type: inWatchedBtnType.actionType,
+      payload: { movie }
+    });
+  }
 
   changePage(pageEvent: PageEvent) {
     this.store.dispatch({
@@ -106,13 +99,64 @@ export class SearchPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.moviesToShowPrepared$ = this.store.select(combinedSelector);
-    this.countOfMovies$ = this.store.select(({ searchResult: { totalMovies } }) => totalMovies);
     this.searchResult$ = this.store.select('searchResult');
-    this.store
-      .select(({ searchResult: { query } }) => query)
-      .subscribe((query) => (this.query = query));
+    this.combinedLists$ = this.store.select(
+      ({
+        searchResult: { movies: found, error },
+        favorite: { movies: favorite },
+        watched: { movies: watched }
+      }) => ({
+        found,
+        error,
+        favorite,
+        watched
+      })
+    );
+    this.moviesToShowPrepared$ = this.combinedLists$.pipe(
+      map(({ found, error, favorite, watched }) => {
+        if (error) {
+          return [];
+        }
+        return found.map((movie) => {
+          const createBtn = (
+            list: Array<IMovie>,
+            addToList: (movie: IMovie) => void,
+            removeFromList: (movie: IMovie) => void,
+            inListBtnType: IButtonType,
+            addToListBtnType: IButtonType
+          ) => {
+            const inList = !!listHas(list, movie);
+            let btn: Button;
+            if (inList) {
+              btn = new Button(inListBtnType, () => removeFromList(movie));
+            } else {
+              btn = new Button(addToListBtnType, () => addToList(movie));
+            }
+            return btn;
+          };
+          const watchedBtn = createBtn(
+            watched,
+            this.addToWatched,
+            this.removeFromWatched,
+            inWatchedBtnType,
+            addToWatchedBtnType
+          );
+          const favoriteBtn = createBtn(
+            favorite,
+            this.addToFavorite,
+            this.removeFromFavorite,
+            inFavoriteBntType,
+            addToFavoriteBtnType
+          );
+          return {
+            movie,
+            buttons: [favoriteBtn, watchedBtn]
+          };
+        });
+      })
+    );
     this.searchResult$.subscribe(({ error, query }) => {
+      this.query = query;
       if (error) {
         this.showMessage(`Возникла ошибка при поиске '${query}': ${error}`, 'закрыть');
       }

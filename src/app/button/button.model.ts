@@ -1,4 +1,5 @@
 import { IButtonType } from './button.types';
+import { Store } from '@ngrx/store';
 
 export class Button {
   onClick: () => void;
@@ -8,7 +9,7 @@ export class Button {
 
   constructor(
     buttonType: IButtonType,
-    onClick: () => void
+    onClick: () => void,
   ) {
     this.onClick = onClick;
     this.label = buttonType.label;

@@ -1,21 +1,21 @@
 import { ActionTypes } from '../short-movie/short-movie.actions';
 import { ThemePalette } from '@angular/material';
 
-export const addToFavoriteBtn: IButtonType = {
+export const addToFavoriteBtnType: IButtonType = {
   label: 'Добавить в избранное',
   actionType: ActionTypes.AddToFavorite,
   iconName: 'favorite',
   color: 'primary'
 };
 
-export const inFavorite: IButtonType = {
+export const inFavoriteBntType: IButtonType = {
   label: 'В избранном',
   actionType: ActionTypes.RemoveFromFavorite,
   iconName: 'favorite',
   color: 'accent'
 };
 
-export const inWatched: IButtonType = {
+export const inWatchedBtnType: IButtonType = {
   label: 'В просмотренном',
   actionType: ActionTypes.RemoveFromWatched,
   iconName: 'watched',
@@ -35,7 +35,7 @@ export const removeFromFavoriteBtnType: IButtonType = {
   iconName: 'remove'
 };
 
-export const addToWatchedBtn: IButtonType = {
+export const addToWatchedBtnType: IButtonType = {
   label: 'Добавить в просмотренное',
   actionType: ActionTypes.AddToWatched,
   iconName: 'watched',
