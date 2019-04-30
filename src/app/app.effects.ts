@@ -19,8 +19,8 @@ export class AppEffects {
           payload: {
             query,
             page,
-            movies: res.Search,
-            totalMovies: res.totalResults,
+            movies: res.Search || [],
+            totalMovies: res.totalResults || 0,
             error: res.Error
           }
         })),

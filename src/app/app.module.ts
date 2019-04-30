@@ -33,6 +33,7 @@ import {
   MatButtonToggleModule
 } from '@angular/material';
 import { MoviePropComponent } from './movie-prop/movie-prop.component';
+import { ListOfMoviesComponent } from './list-of-movies/list-of-movies.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { MoviePropComponent } from './movie-prop/movie-prop.component';
     WatchedPageComponent,
     FavoritePageComponent,
     MoviePageComponent,
-    MoviePropComponent
+    MoviePropComponent,
+    ListOfMoviesComponent
   ],
   imports: [
     BrowserModule,

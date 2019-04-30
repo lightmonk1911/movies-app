@@ -7,6 +7,20 @@
     class="search-page__search-bar"
   ></app-search-bar>
 
+  <mat-accordion class="search-page__error" *ngIf="(searchResult$ | async).error">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Возникла ошибка при поиске фильма по запросу {{ (searchResult$ | async).query }}
+        </mat-panel-title>
+        <mat-panel-description>
+          Подробнее
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      {{ (searchResult$ | async).error }}
+    </mat-expansion-panel>
+  </mat-accordion>
+
   <div class="search-page__results" *ngIf="!(searchResult$ | async).searching && (moviesToShowPrepared$ | async).length">
     <div class="search-page__top-controls">
       <mat-button-toggle-group name="view" [value]="view" (change)="changeView($event)">
@@ -31,22 +45,6 @@
       [movie]="item.movie"
       [buttons]="item.buttons"
     ></app-short-movie>
-
-    <div class="search-page__error" *ngIf="(searchResult$ | async).error"></div>
-
-    <mat-accordion class="search-page__error" *ngIf="(searchResult$ | async).error">
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Возникла ошибка при поиске фильма по запросу {{ (searchResult$ | async).query }}
-          </mat-panel-title>
-          <mat-panel-description>
-            Подробнее
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        {{ (searchResult$ | async).error }}
-      </mat-expansion-panel>
-    </mat-accordion>
 
     <mat-paginator
       class="search-page__paginator"
