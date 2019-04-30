@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Store, createSelector } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { IMovie, View } from '../short-movie/short-movie.component';
 import { IListOfMovies, ISearchResult } from '../api/api.actions';
 import { PageEvent, MatSnackBar, MatButtonToggleChange } from '@angular/material';
 import { ActionTypes } from '../search-bar/search-bar.actions';
 import {
-  IButtonType,
   addToFavoriteBtnType,
   inWatchedBtnType,
   addToWatchedBtnType,
@@ -14,64 +13,11 @@ import {
 } from '../button/button.types';
 import { Button } from '../button/button.model';
 import { map } from 'rxjs/operators';
+import { listHasMovie, combinedSelector, prepareFoundMovies } from '../utils';
 
-const listHas = (list: Array<IMovie>, movie: IMovie) =>
-  list.find((movieInList) => movieInList.imdbID === movie.imdbID);
 
-const combinedSelector = ({
-  searchResult: { movies: found, error },
-  favorite: { movies: favorite },
-  watched: { movies: watched }
-}) => ({
-  found,
-  error,
-  favorite,
-  watched
-});
 
-const getCreateBtnFunc = (movie: IMovie) => (
-  list: Array<IMovie>,
-  addToList: (movie: IMovie) => void,
-  removeFromList: (movie: IMovie) => void,
-  inListBtnType: IButtonType,
-  addToListBtnType: IButtonType
-) => {
-  const inList = !!listHas(list, movie);
-  let btn: Button;
-  if (inList) {
-    btn = new Button(inListBtnType, () => removeFromList(movie));
-  } else {
-    btn = new Button(addToListBtnType, () => addToList(movie));
-  }
-  return btn;
-};
 
-const prepareMovies = ({ found, error, favorite, watched }) => {
-  if (error) {
-    return [];
-  }
-  return found.map((movie: IMovie) => {
-    const createBtn = getCreateBtnFunc(movie);
-    const watchedBtn = createBtn(
-      watched,
-      this.addToWatched,
-      this.removeFromWatched,
-      inWatchedBtnType,
-      addToWatchedBtnType
-    );
-    const favoriteBtn = createBtn(
-      favorite,
-      this.addToFavorite,
-      this.removeFromFavorite,
-      inFavoriteBntType,
-      addToFavoriteBtnType
-    );
-    return {
-      movie,
-      buttons: [favoriteBtn, watchedBtn]
-    };
-  });
-};
 
 @Component({
   selector: 'app-search-page',
@@ -100,8 +46,7 @@ export class SearchPageComponent implements OnInit {
     }>,
     private snackBar: MatSnackBar
   ) {
-    this.searchResult$ = this.store.select('searchResult');
-    this.combinedLists$ = this.store.select(combinedSelector);
+
   }
 
   addToFavorite = (movie: IMovie) => {
@@ -157,7 +102,9 @@ export class SearchPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.moviesToShowPrepared$ = this.combinedLists$.pipe(map(prepareMovies));
+    this.combinedLists$ = this.store.select(combinedSelector);
+    this.moviesToShowPrepared$ = this.combinedLists$.pipe(map(prepareFoundMovies.bind(this)));
+    this.searchResult$ = this.store.select('searchResult');
     this.searchResult$.subscribe(({ error, query }) => {
       this.query = query;
       if (error) {

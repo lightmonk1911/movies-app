@@ -12,7 +12,7 @@ export const inFavoriteBntType: IButtonType = {
   label: 'В избранном',
   actionType: ActionTypes.RemoveFromFavorite,
   iconName: 'favorite',
-  color: 'accent'
+  color: 'accent',
 };
 
 export const inWatchedBtnType: IButtonType = {
