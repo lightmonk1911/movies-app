@@ -29,6 +29,50 @@ const combinedSelector = ({
   watched
 });
 
+const getCreateBtnFunc = (movie: IMovie) => (
+  list: Array<IMovie>,
+  addToList: (movie: IMovie) => void,
+  removeFromList: (movie: IMovie) => void,
+  inListBtnType: IButtonType,
+  addToListBtnType: IButtonType
+) => {
+  const inList = !!listHas(list, movie);
+  let btn: Button;
+  if (inList) {
+    btn = new Button(inListBtnType, () => removeFromList(movie));
+  } else {
+    btn = new Button(addToListBtnType, () => addToList(movie));
+  }
+  return btn;
+};
+
+const prepareMovies = ({ found, error, favorite, watched }) => {
+  if (error) {
+    return [];
+  }
+  return found.map((movie: IMovie) => {
+    const createBtn = getCreateBtnFunc(movie);
+    const watchedBtn = createBtn(
+      watched,
+      this.addToWatched,
+      this.removeFromWatched,
+      inWatchedBtnType,
+      addToWatchedBtnType
+    );
+    const favoriteBtn = createBtn(
+      favorite,
+      this.addToFavorite,
+      this.removeFromFavorite,
+      inFavoriteBntType,
+      addToFavoriteBtnType
+    );
+    return {
+      movie,
+      buttons: [favoriteBtn, watchedBtn]
+    };
+  });
+};
+
 @Component({
   selector: 'app-search-page',
   templateUrl: './search-page.component.html',
@@ -113,49 +157,7 @@ export class SearchPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.moviesToShowPrepared$ = this.combinedLists$.pipe(
-      map(({ found, error, favorite, watched }) => {
-        if (error) {
-          return [];
-        }
-        return found.map((movie) => {
-          const createBtn = (
-            list: Array<IMovie>,
-            addToList: (movie: IMovie) => void,
-            removeFromList: (movie: IMovie) => void,
-            inListBtnType: IButtonType,
-            addToListBtnType: IButtonType
-          ) => {
-            const inList = !!listHas(list, movie);
-            let btn: Button;
-            if (inList) {
-              btn = new Button(inListBtnType, () => removeFromList(movie));
-            } else {
-              btn = new Button(addToListBtnType, () => addToList(movie));
-            }
-            return btn;
-          };
-          const watchedBtn = createBtn(
-            watched,
-            this.addToWatched,
-            this.removeFromWatched,
-            inWatchedBtnType,
-            addToWatchedBtnType
-          );
-          const favoriteBtn = createBtn(
-            favorite,
-            this.addToFavorite,
-            this.removeFromFavorite,
-            inFavoriteBntType,
-            addToFavoriteBtnType
-          );
-          return {
-            movie,
-            buttons: [favoriteBtn, watchedBtn]
-          };
-        });
-      })
-    );
+    this.moviesToShowPrepared$ = this.combinedLists$.pipe(map(prepareMovies));
     this.searchResult$.subscribe(({ error, query }) => {
       this.query = query;
       if (error) {
