@@ -12,7 +12,7 @@ import { removeFromFavoriteBtnType } from '../button/button.types';
   styleUrls: ['./favorite-page.component.scss']
 })
 export class FavoritePageComponent implements OnInit {
-  pageTitle: 'Избранное';
+  pageTitle = 'Избранное';
   list$: Observable<IListOfMovies>;
   changePageActionType = ActionTypes.ChangeFavoriteListPage;
 

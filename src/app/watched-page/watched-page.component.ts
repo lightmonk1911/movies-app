@@ -12,7 +12,7 @@ import { removeFromWatchedBtnType } from '../button/button.types';
   styleUrls: ['./watched-page.component.scss']
 })
 export class WatchedPageComponent implements OnInit {
-  pageTitle: 'Просмотренное';
+  pageTitle = 'Просмотренное';
   list$: Observable<IListOfMovies>;
   changePageActionType = ActionTypes.ChangeWatchedListPage;
 

@@ -1,0 +1,13 @@
+.list-page {
+  margin-bottom: 60px;
+
+  &__heading {
+    margin: 20px;
+  }
+
+  &__top-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+}
