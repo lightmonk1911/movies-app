@@ -8,36 +8,13 @@ import {
   ActionTypes as FavoritePageActionTypes,
   ActionsUnion as FavoritePageActionsUnion
 } from '../favorite-page/favorite-page.actions';
+import { createMovieListReducer } from './movieListReducer';
 
-const initialFavorite = { page: 1, movies: [], totalMovies: 0 };
-
-export function favoriteReducer(
-  state: IListOfMovies = initialFavorite,
+export const favoriteReducer: (
+  state: IListOfMovies,
   action: ShortMovieActionsUnion | FavoritePageActionsUnion
-): IListOfMovies {
-  switch (action.type) {
-    case ShortMovieActionTypes.RemoveFromFavorite: {
-      const movies = state.movies.filter((movie) => action.payload.movie.imdbID !== movie.imdbID);
-      const totalMovies = movies.length;
-      const page = action.payload.page || state.page;
-      return { ...state, movies, totalMovies, page };
-    }
-
-    case ShortMovieActionTypes.AddToFavorite: {
-      const movies = state.movies
-        .filter((movie) => action.payload.movie.imdbID !== movie.imdbID)
-        .concat(action.payload.movie);
-      const totalMovies = movies.length;
-      return { ...state, movies, totalMovies };
-    }
-
-    case FavoritePageActionTypes.ChangeFavoriteListPage: {
-      const { page } = action.payload;
-      return { ...state, page };
-    }
-
-    default: {
-      return state;
-    }
-  }
-}
+) => IListOfMovies = createMovieListReducer(
+  ShortMovieActionTypes.RemoveFromFavorite,
+  ShortMovieActionTypes.AddToFavorite,
+  FavoritePageActionTypes.ChangeFavoriteListPage
+);
