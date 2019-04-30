@@ -18,6 +18,17 @@ import { map } from 'rxjs/operators';
 const listHas = (list: Array<IMovie>, movie: IMovie) =>
   list.find((movieInList) => movieInList.imdbID === movie.imdbID);
 
+const combinedSelector = ({
+  searchResult: { movies: found, error },
+  favorite: { movies: favorite },
+  watched: { movies: watched }
+}) => ({
+  found,
+  error,
+  favorite,
+  watched
+});
+
 @Component({
   selector: 'app-search-page',
   templateUrl: './search-page.component.html',
@@ -44,7 +55,10 @@ export class SearchPageComponent implements OnInit {
       favorite: IListOfMovies;
     }>,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.searchResult$ = this.store.select('searchResult');
+    this.combinedLists$ = this.store.select(combinedSelector);
+  }
 
   addToFavorite = (movie: IMovie) => {
     this.store.dispatch({
@@ -99,19 +113,6 @@ export class SearchPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchResult$ = this.store.select('searchResult');
-    this.combinedLists$ = this.store.select(
-      ({
-        searchResult: { movies: found, error },
-        favorite: { movies: favorite },
-        watched: { movies: watched }
-      }) => ({
-        found,
-        error,
-        favorite,
-        watched
-      })
-    );
     this.moviesToShowPrepared$ = this.combinedLists$.pipe(
       map(({ found, error, favorite, watched }) => {
         if (error) {
